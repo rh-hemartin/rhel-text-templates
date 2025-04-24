@@ -1,0 +1,34 @@
+---
+synopsis: 'rhel{{ rhel_verison_x }}/{{ image }} container image security update'
+topic: 'An rhel{{ rhel_version_x }}/{{ image }} container image is now available in the Red Hat container registry.'
+problem_description: |
+  {{ pyxis_short_description }}
+
+  To pull this container image, run one of the following commands:
+  podman pull registry.redhat.io/rhel{{rhel_major_version}}/{{image}} (authenticated)
+  podman pull registry.access.redhat.com/ubi{{rhel_major_version}}/{{image}} (unauthenticated)
+
+  {% if z_stream %}
+    Security Fix(es):
+    {% for jira in jira_list.issues %}
+      * {{ jira.fields.summary }} ){{ jira.fields.cve_idcve_alias }})
+  {% endfor %}
+
+  For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+  {% endif %}
+
+  {% if not z_stream %}
+    Additional Changes:
+
+    For detailed information on changes in this release, see the Red Hat Enterprise Linux {{ rhel_version_xy }} {{ beta }} Release Notes linked from the References section.
+  {% endif %}
+
+solution: |
+  The container image provided by this update can be downloaded from the Red Hat container registry
+  at registry.redhat.io or registry.access.redhat.com using the "podman pull" command. For more
+  information about the image, search the {{ image }} in the Red Hat
+  Ecosystem Catalog: https://catalog.redhat.com/software/containers/search.
+
+references: |
+  https://access.redhat.com/security/updates/classification/
+  https://catalog.redhat.com/software/containers/search

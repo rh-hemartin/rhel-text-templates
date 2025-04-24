@@ -1,0 +1,22 @@
+synopsis: 'rhel{{ rhel_verison_x }}/{{ image }} container image'
+topic: 'An rhel{{ rhel_version_x }}/{{ image }} container image is now available in the Red Hat container registry.'
+problem_description: |
+  {{ pyxis_short_description }}
+
+  To pull this container image, run one of the following commands:
+  podman pull registry.redhat.io/rhel{{rhel_major_version}}/{{image}} (authenticated)
+  podman pull registry.access.redhat.com/ubi{{rhel_major_version}}/{{image}} (unauthenticated)
+
+  {% if z_stream %}
+    Bug Fix(es) and Enhancement(s):
+    {% for jira in jira_list.issues %}
+      * {{ jira.fields.summary }} ({{ jira.key }})
+    {% endfor %}
+  {% endif %}
+
+solution: |
+  The container image provided by this update can be downloaded from the Red Hat container registry at
+  registry.redhat.io or registry.access.redhat.com using the "podman pull" command. For more information
+  about the image, search the {{ image }} in the Red Hat Ecosystem Catalog: https://catalog.redhat.com/software/containers/search.
+
+references: https://catalog.redhat.com/software/containers/search

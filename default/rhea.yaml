@@ -1,0 +1,25 @@
+---
+synopsis: '{{ module_stream_or_package }} bug fix and enhancement update'
+topic: 'An update for the {{ module_stream_or_package }} is now available for {{ rhel_version_description }}'
+problem_description: |
+  {% if z_stream %}
+    {{ module_stream_or_package_description }}
+    {# package description - Errata API or Brew #}
+
+    Bug Fix(es) and Enhancement(s):
+    {% for jira in jira_list.issues %}
+      * {{ jira.fields.summary }} ({{ jira.key }})
+    {% endfor %}
+  {% endif %}
+
+  {% if not z_stream %}
+      For detailed information on changes in this release, see the Red Hat Enterprise Linux {{ rhel_version_xy }} {{ beta }} Release Notes linked from the References section.
+  {% endif %}
+
+solution: |
+  For details on how to apply this update, which includes the changes described in this advisory, refer to: {{ kb_article }}
+
+references: |
+  {% if not z_stream %}
+    https://docs.redhat.com/en/documentation/{{ product }}/{{ product_version_x }}/html/{{ product_version_xy }}_release_notes/index
+  {% endif %}
