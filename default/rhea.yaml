@@ -1,48 +1,50 @@
 ---
 synopsis: |
-  {% if type == 'RHSA' %}
-    {{ severity }}: {{ product_name }} security update
-  {% else %}
-    {{ product_name }} bug fix and enhancement update
-  {% endif %}
+    {%- if advisory.spec.type == "RHSA" %}
+    {{ advisory.spec.severity }}: {{ advisory.spec.product_name }} security update
+    {% else %}
+    {{ advisory.spec.product_name }} bug fix and enhancement update
+    {% endif %}
+
 topic: |
-  {% if type == 'RHSA' %}
-    An update for the {{ product_name }} is now available for {{ product_version }}.
-    Red Hat Product Security has rated this update as having a security impact of {{ severity }}. A Common Vulnerability
+    {%- if advisory.spec.type == 'RHSA' %}
+    An update for the {{ advisory.spec.product_name }} is now available for {{ advisory.spec.product_version }}.
+    Red Hat Product Security has rated this update as having a security impact of {{ advisory.spec.severity }}. A Common Vulnerability
     Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each
     vulnerability from the CVE link(s) in the References section.
-  {% else %}
-    An update for the {{ product_name }} is now available for {{ product_version }}
-  {% endif %}
+    {% else %}
+    An update for the {{ advisory.spec.product_name }} is now available for {{ advisory.spec.product_version }}
+    {% endif %}
 
 description: |
-  {% if z_stream %}
-    {{ product_description }}
-    {# package description - Errata API or Brew #}
-    {% if type == 'RHSA' %}
-      Security Fix(es):
-      {% for jira in issues %}
-        * {{ jira.fields.summary }} ({{ jira.fields.cve_idcve_alias }})
-      {% endfor %}
+    {% set z_stream = true if not advisory.spec.product_version.endswith("0") else false %}
+    {%- if z_stream -%}
+    {{ advisory.spec.product_description | default("No description") }}
 
-      For more details about the security issue(s), including the impact, a CVSS score, acknowledgments,
-      and other related information, refer to the CVE page(s) listed in the References section.
+    {% if advisory.spec.type == 'RHSA' %}
+    Security Fix(es):
+    {% for jira in advisory.spec.issues.fixed %}
+    * {{ jira.id }} ({{ jira.id }})
+    {% endfor %}
+
+    For more details about the security issue(s), including the impact, a CVSS score, acknowledgments,
+    and other related information, refer to the CVE page(s) listed in the References section.
     {% else %}
-      Bug Fix(es) and Enhancement(s):
-      {% for jira in issues %}
-        * {{ jira.fields.summary }} ({{ jira.key }})
-      {% endfor %}
+    Bug Fix(es) and Enhancement(s):
+    {% for jira in advisory.spec.issues.fixed %}
+    * {{ jira.id }} ({{ jira.id }})
+    {% endfor %}
     {% endif %}
-  {% endif %}
+    {% endif %}
 
-  {% if not z_stream %}
+    {%- if not z_stream -%}
     For detailed information on changes in this release, see the Red Hat Enterprise Linux {{ rhel_version_xy }}
     {{ beta }} Release Notes linked from the References section.
-  {% endif %}
+    {% endif %}
 
 solution: |
-  For details on how to apply this update, which includes the changes described in this advisory, refer to: {{ kb_article }}
+    For details on how to apply this update, which includes the changes described in this advisory, refer to: {{ kb_article }}
 
 references:
-  - "{% if not z_stream %} https://docs.redhat.com/en/documentation/{{ product }}/{{ product_version_x }}/html/{{ product_version_xy }}_release_notes/index {% endif %}"
-  - '{% if type == "RHSA" %} https://access.redhat.com/security/updates/classification/#{{ severity }} {% endif %}'
+    - "{% if not z_stream %} https://docs.redhat.com/en/documentation/{{ product }}/{{ product_version_x }}/html/{{ product_version_xy }}_release_notes/index {% endif %}"
+    - '{% if type == "RHSA" %} https://access.redhat.com/security/updates/classification/#{{ severity }} {% endif %}'
