@@ -41,6 +41,16 @@ to replicate the behaviour of Konflux when creating advisories. The script also 
 template from this repository and combines both to show you the result of the template
 given the data on the advisory specified.
 
+Before running the test script create the environment to install its dependencies:
+
+```bash
+$ python -m venv venv
+$ source venv/bin/activate
+$ python -m pip install -r requirements.txt
+```
+
+*Note*: before executing the script you need to `source ven/bin/activate`
+
 These are some usage examples for the testing script:
 
 * Locally:
