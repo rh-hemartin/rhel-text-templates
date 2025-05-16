@@ -1,0 +1,63 @@
+---
+synopsis: |
+  {%- set product_version_str = advisory.spec.product_version | string() %}
+  {%- set rhel_major_version = product_version_str.split('.')[0] %}
+
+  {%- if advisory.spec.type == "RHSA" %}
+  {{ advisory.spec.severity }}: Application Stream container images security update
+  {%- else %}
+  Application Stream container images bug fix and enhancement update
+  {%- endif %}
+topic: "Updated Application Stream container images for {{ advisory.spec.product_name }} are now available in the Red Hat container registry."
+description: |
+  Red Hat Enterprise Linux {{ rhel_major_version }} Application Stream container images are based on the corresponding
+  Application Stream component and the ubi{{ rhel_major_version }} or rhel{{ rhel_major_version }} base image.
+
+  The rhel{{ rhel_major_version }} and ubi{{ rhel_major_version }} base images have been updated to the latest version.
+
+
+  This update includes the following images:
+    {%- if advisory.spec.content.images %}
+      {%- for image in advisory.spec.content.images %}
+        {%- if image.architecture == "amd64" %}
+          {%- set repo_parts =  image.repository.split('/') %}
+    * {{ repo_parts[-1] }}
+        {%- endif %}
+      {%- endfor %}
+    {%- endif %}
+
+  To pull a container image, run one of the following commands as root based on the <image_name>:
+
+  podman pull registry.redhat.io/<image_name> (authenticated, rhel9 images)  
+  podman pull registry.access.redhat.com/<image_name> (unauthenticated, ubi9 images)
+
+  {% if advisory.spec.type == 'RHSA' %}
+  Security Fix(es):
+    {%- if advisory.spec.issues.fixed %}
+      {%- for jira in advisory.spec.issues.fixed %}
+    * {{ jira.summary }} ({{ jira.cve_id | replace("null", "") }})
+      {%- endfor %}
+    {%- endif %}
+
+  For more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.
+  {%- else %}
+    {%- set image_count = advisory.spec.content.images|selectattr('architecture', 'equalto', 'amd64')|list|length %}
+    {%- set z_stream = image_count == 1 %}
+    {%- if advisory.spec.issues.fixed %}
+      {%- set public_issue_count = advisory.spec.issues.fixed|selectattr('public', 'equalto', true)|list|length %}
+      {%- if z_stream %}
+        {%- if public_issue_count > 0 %}
+  Bug Fix(es) and Enhancement(s):
+          {%- for jira in advisory.spec.issues.fixed %}
+            {%- if jira.public == true %}
+    * {{ jira.summary }} ({{ jira.id }})
+            {%- endif %}
+          {%- endfor %}
+        {%- endif %}
+      {%- endif %}
+    {%- endif %}
+  {%- endif %}
+solution: |
+  The container images provided by this update can be downloaded from the Red Hat container registry
+  at registry.redhat.io using the "podman pull" command. For more information about the image,
+  search the <image_name> in the Red Hat Ecosystem Catalog: https://catalog.redhat.com/software/containers/search.
