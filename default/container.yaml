@@ -33,15 +33,9 @@ description: |
 
   {% if advisory.spec.type == 'RHSA' %}
   Security Fix(es):
-    {%- if advisory.spec.content.images %}
-      {%- for image in advisory.spec.content.images %}
-        {%- if image.architecture == "amd64" %}
-          {%- set repo_parts =  image.repository.split('/') %}
-    * {{ repo_parts[-1] }}
-          {%- for key, value in image.cves.fixed.items() %}
-      * {{ key }}
-          {%- endfor %}
-        {%- endif %}
+    {%- if advisory.spec.issues.fixed %}
+      {%- for jira in advisory.spec.issues.fixed %}
+    * {{ jira.summary }} ({{ jira.cve_id | replace("null", "") }})
       {%- endfor %}
     {%- endif %}
 
