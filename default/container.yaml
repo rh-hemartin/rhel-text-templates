@@ -61,3 +61,5 @@ solution: |
   The container images provided by this update can be downloaded from the Red Hat container registry
   at registry.redhat.io using the "podman pull" command. For more information about the image,
   search the <image_name> in the Red Hat Ecosystem Catalog: https://catalog.redhat.com/software/containers/search.
+
+references: [https://catalog.redhat.com/software/containers/search]
